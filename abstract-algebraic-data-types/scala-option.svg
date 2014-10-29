@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   class="class-diagram"
+   id="graph1662"
+   viewBox="0 0 170.99999 97"
+   height="121.24999"
+   width="213.74998"
+   version="1.1"
+   style="display:block"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="scala-option.svg">
+  <metadata
+     id="metadata104">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs102" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1855"
+     inkscape:window-height="1176"
+     id="namedview100"
+     showgrid="false"
+     inkscape:zoom="2"
+     inkscape:cx="359.4241"
+     inkscape:cy="77.365089"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="graph1662"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <g
+     id="graph2"
+     class="cluster"
+     transform="translate(-9.5000041,96.5)" />
+  <g
+     id="graph3"
+     class="cluster"
+     transform="translate(-9.5000041,96.5)" />
+  <g
+     id="graph4"
+     class="cluster"
+     transform="translate(-9.5000041,96.5)" />
+  <g
+     id="graph1662_0"
+     class="node this class"
+     transform="translate(-9.5000041,96.5)" />
+  <g
+     id="g3010"
+     transform="translate(-13.500004,-73.5)">
+    <polygon
+       id="polygon21"
+       style="fill:#0a955b;stroke:#115f3b;display:block"
+       points="134,-96 134,-96 48,-96 48,-70 134,-70 "
+       transform="translate(4,170)" />
+    <image
+       sodipodi:absref="class_diagram.png"
+       xlink:href="class_diagram.png"
+       transform="translate(4,170)"
+       style="display:block"
+       id="image23"
+       width="16"
+       height="16"
+       preserveAspectRatio="xMinYMin meet"
+       x="58"
+       y="-91" />
+    <text
+       id="text25"
+       style="font-size:10px;text-anchor:start;fill:#ffffff;display:block;font-family:NYTFranklinMedium"
+       x="80"
+       y="-80.666702"
+       font-size="10.00"
+       transform="translate(4,170)">Option[A]</text>
+    <g
+       transform="translate(4,170)"
+       class="node object"
+       id="graph1662_1"
+       style="opacity:0.75">
+      <a
+         xlink:href="None$.html#inheritance-diagram"
+         xlink:title="scala.None"
+         id="a37">
+        <polygon
+           points="10,-1.24345e-14 78,-3.55271e-15 78,-26 78,-26 10,-26 "
+           style="fill:#3556a7;stroke:#102966"
+           id="polygon39" />
+        <image
+           sodipodi:absref="object_diagram.png"
+           xlink:href="object_diagram.png"
+           y="-21"
+           x="20"
+           preserveAspectRatio="xMinYMin meet"
+           height="16"
+           width="16"
+           id="image41" />
+        <text
+           font-size="10.00"
+           y="-10.6667"
+           x="42"
+           style="font-size:10px;text-anchor:start;fill:#ffffff;display:block;font-family:NYTFranklinMedium"
+           id="text43">None</text>
+      </a>
+    </g>
+    <g
+       transform="translate(4,170)"
+       class="edge inheritance"
+       id="graph1662_0_1">
+      <a
+         xlink:title="None is a subtype of Option[A]"
+         id="a46">
+        <path
+           d="M 79.264,-65.5208 C 71.0579,-53.299 60.2728,-37.2361 52.8007,-26.1074"
+           style="fill:none;stroke:#d4d4d4"
+           id="path48"
+           inkscape:connector-curvature="0" />
+        <polygon
+           points="82.1597,-69.8335 80.8253,-64.7069 77.9196,-66.6579 77.9196,-66.6579 "
+           style="fill:none;stroke:#d4d4d4"
+           id="polygon50" />
+      </a>
+    </g>
+    <g
+       transform="translate(4,170)"
+       class="node class"
+       id="graph1662_2"
+       style="opacity:0.75">
+      <a
+         xlink:href="Some.html#inheritance-diagram"
+         xlink:title="scala.Some"
+         id="a53">
+        <polygon
+           points="96,-1.24345e-14 180,-3.55271e-15 180,-26 180,-26 96,-26 "
+           style="fill:#0a955b;stroke:#115f3b"
+           id="polygon55" />
+        <image
+           sodipodi:absref="class_diagram.png"
+           xlink:href="class_diagram.png"
+           y="-21"
+           x="106"
+           preserveAspectRatio="xMinYMin meet"
+           height="16"
+           width="16"
+           id="image57" />
+        <text
+           font-size="10.00"
+           y="-10.6667"
+           x="128"
+           style="font-size:10px;text-anchor:start;fill:#ffffff;display:block;font-family:NYTFranklinMedium"
+           id="text59">Some[A]</text>
+      </a>
+    </g>
+    <g
+       transform="translate(4,170)"
+       class="edge inheritance"
+       id="graph1662_0_2">
+      <a
+         xlink:title="Some[A] is a subtype of Option[A]"
+         id="a62">
+        <path
+           d="m 102.736,-65.5208 c 8.206,12.2218 18.991,28.2847 26.463,39.4134"
+           style="fill:none;stroke:#d4d4d4"
+           id="path64"
+           inkscape:connector-curvature="0" />
+        <polygon
+           points="99.8403,-69.8335 104.08,-66.6579 101.175,-64.7069 101.175,-64.7069 "
+           style="fill:none;stroke:#d4d4d4"
+           id="polygon66" />
+      </a>
+    </g>
+  </g>
+</svg>
