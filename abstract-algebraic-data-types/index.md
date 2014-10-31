@@ -112,10 +112,10 @@ object OptionOps {
 }
 ```
 
-Functions over `OptionSig`/`OptionOps`
+Functions over `OptionSig`/`OptionOps` {id="functor"}
 --------------------------------------
 
-We now want to define new structures that depends on our module. For this, we need something similar to [ML functors](http://caml.inria.fr/pub/docs/oreilly-book/html/book-ora131.html).
+We now want to define new structures that depends on our module. For this, we need something similar to an [ML functor](http://caml.inria.fr/pub/docs/oreilly-book/html/book-ora131.html).
 
 For example, let's define a functor that can construct instances of `scalaz.Show` for us:
 
@@ -149,30 +149,28 @@ object OptionShow {
 }
 ```
 
-Wow, so many weird notations thrown at your face all at once! And you probably don't know all of them. Let's see what's happening.
+That is a lot of weird Scala notations that you may not be familiar with. Let's decompose them.
 
-`OptionShow[Sig <: OptionSig : OptionOps]` means that `OptionShow` is parameterized by a `Sig`, which is required to be a subtype of `OptionSig`, and a instance of `OptionOps[Sig]` must also be **implicitly** available
+`OptionShow[Sig <: OptionSig : OptionOps]` means that `OptionShow` is parameterized by a `Sig`, which is required to be a subtype of `OptionSig`. Also an instance of `OptionOps[Sig]` must be **implicitly** available.
 
 `def optionShow[A : Show]: Show[Sig#Option[A]]` means that if we can provide an instance of `Show[A]`, then `optionShow` can construct an instance of `Show[Sig#Option[A]]` for us.
 
-This `scalaz.Show` is quite simple, yet powerful. It simply provides a `shows` function for instances of the provided type (here `Sig#Option[A]`). The trick here is that unlike `Object#toString()`, our `Show` instances are driven by types, so we can rely on a `Show[A]` being available.
+`scalaz.Show` is a simple yet powerful typeclass from Scalaz. It simply provides a `shows` function for instances of the provided type (here `Sig#Option[A]`). The trick here is that unlike `Object#toString()`, our `Show` instances are **driven by types**, so we can rely on a `Show[A]` being available.
 
 
 
-A simple implementation
+A simple implementation {id="simple-implementation"}
 -----------------------
 
-We have almost everything in place, we just need to provide an implementation for our module.
+We almost have everything we need in place. We just need to provide an implementation for our module.
 
-`scala.Option` looks like a good candidate, after all that's where we started from:
+`scala.Option` looks like a good candidate for a first implementation, after all that's where we started from:
 
 ```scala
 trait ScalaOption extends OptionSig {
 
   type Option[+A] = scala.Option[A]
-
   type Some[+A]   = scala.Some[A]
-
   type None       = scala.None.type
 
 }
@@ -196,15 +194,15 @@ object ScalaOption {
 }
 ```
 
-Nothing fancy here. We just plugged (aka. aliased) our types to the concrete ones. `some` and `none` trivially delegate to `Some.apply` and the `None` singleton. Finally, the `fold` implementation relies on pattern matching.
+Nothing fancy here. We just plugged (aka. [aliased](http://docs.scala-lang.org/tutorials/tour/abstract-types.html)) our types to the concrete ones. `some` and `none` respectively delegate to the `Some.apply` function and the `None` singleton. Finally, the `fold` implementation relies on pattern matching.
 
-Just note that the typeclass instance for `OptionOps[ScalaOption]` is made available in the companion object for `ScalaOption` so that [it will **always** be picked up by Scala when searching for such an implicit](http://eed3si9n.com/implicit-parameter-precedence-again).
-
-
+Just note that the typeclass instance for `OptionOps[ScalaOption]` is made available in the companion object for `ScalaOption` so that [it will **always** be picked up by Scala when looking for such an implicit](http://eed3si9n.com/implicit-parameter-precedence-again).
 
 
 
-Using our option
+
+
+Using our option {id={program}}
 ----------------
 
 Finally, we can write a program using our shiny abstractions :-)
@@ -236,7 +234,7 @@ class Program[Sig <: OptionSig : OptionOps] extends App {
 }
 ```
 
-We can plug everything together:
+And we plug everything together:
 
 ```scala
 scala> object MainWithScalaOption extends Program[ScalaOption]
@@ -248,12 +246,12 @@ optNone: some(none)
 ```
 
 
-Our own module implementation
+Our own module implementation {id="custom-implementation"}
 -----------------------------
 
 Turns out there are many ways to implement our module.
 
-Here is a version of our module where we create our own classes:
+Here is a version of our module where we provide our own classes:
 
 ```scala
 object MyOption extends OptionSig {
@@ -281,28 +279,25 @@ object MyOption extends OptionSig {
 }
 ```
 
-Notice that our signature lies in the singleton type `MyOption.type` and that Scala will have no issue finding the implicit instance in itself: the companion object for the singleton type of a singleton object is itself!
+Notice that our signature lies in the singleton type `MyOption.type`. Scala will have no issue finding the implicit instance in itself because *the companion object for the singleton type of a singleton object is itself*!
 
-I have introduced an `abstract class None` so that I don't need to define a type alias. It also is interesting to see that Scala doesn't require us to define our classes outside of `MyOption` to later alias them: we just do everything at once.
-
-
+We have introduced an `abstract class None` so that we don't need to define a type alias `type None = None.type`. It also is interesting to see that Scala doesn't require us to define our classes outside of `MyOption` to later alias them: we just do everything at once.
 
 
-Java8-based implementation
+
+
+Java8-based implementation {id="java8-implementation"}
 --------------------------
 
 Now, let's reuse Java 8 `java.util.Optional`!
 
 ```scala
 import java.util.Optional
-import java.util.function.{ Function => F, Supplier }
 
 trait Java8Option extends OptionSig {
 
   type Option[+A] = Optional[_ <: A]
-
   type Some[+A]   = Optional[_ <: A]
-
   type None       = Optional[Nothing]
 
 }
@@ -316,6 +311,7 @@ object Java8Option {
     val none: Java8Option#None = Optional.empty()
 
     def fold[A, B](opt: Java8Option#Option[A])(ifNone: => B, ifSome: A => B): B = {
+      import java.util.function.{ Function => F, Supplier }
       def f = new F[A, B] { def apply(a: A): B = ifSome(a) }
       def supplier = new Supplier[B] { def get(): B = ifNone }
       opt.map[B](f).orElseGet(supplier)
@@ -326,19 +322,20 @@ object Java8Option {
 }
 ```
 
+[Java 8's `Optional`](http://docs.oracle.com/javase/8/docs/api/java/util/Optional.html) has only one class for the two cases, and it was made invariant. Still, we can easily fix that on the Scala side with `[_ <: A]`.
 
-`Any`-based implementation
+
+
+`Any`-based implementation {id="any-implementation"}
 --------------------------
 
-This implementation may my favourite:
+Remember all the rage wars on `Option` vs `null`? Or the problem with boxing? Look at that:
 
 ```scala
 trait NullOption extends OptionSig {
 
   type Option[+A] = Any
-
   type Some[+A]   = Any
-
   type None       = Null
 
 }
@@ -361,7 +358,9 @@ object NullOption {
 }
 ```
 
-Yes, that's right, we are relying on `null` for our module, but this is completely typesafe as it never leaks outside of the abstraction. The trick is that `Null`, just like `Nothing`, is a subtype of `Any`. And you can note that that there is **no wrapping involved**.
+Yes, that's right, we are relying on `null` for the `None` case while the `Some` case is the value itself :-)
+
+But this is **completely typesafe** as it never leaks outside of the abstraction. The trick is that `Null` is a subtype of `Any`. And you can note that that there is **no wrapping involved**.
 
 
 
