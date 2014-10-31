@@ -1,16 +1,15 @@
-Title: @@@
-Date: 2014-10-17
-Slug: pellucid-article
+Title:  Abstract Algebraic Data Type
+Slug: abstract-algebraic-data-type
 
-Scala's sealed class hierarchies (aka. [Algebraic Data Types](https://en.wikipedia.org/wiki/Algebraic_data_type)) are for sure one of its most praised features. Yet, they have one downside: they don't let us abstract over the types as `case class`es are all about constructing new **concrete** types.
+Scala's sealed class hierarchies (aka. [Algebraic Data Types](https://en.wikipedia.org/wiki/Algebraic_data_type)) are for sure one of its most praised features. Yet, they have one downside: they don't let us abstract over the type hierarchy as `trait`s and `class`es are all about constructing new **concrete** types.
 
-In this blog post, I will explore how we can relax this constraint so that we can get an abstracted version of `scala.Option`, which will allow us to switch implementations at any time.
+In this post, we will explore how we can relax this constraint so that we can get an abstracted version of `scala.Option`, which would allow us to switch implementations.
 
 
 Deconstructing Scala's algebraic data types {id="deconstructing"}
 -------------------------------------------
 
-As a reminder, here is basically [how Scala's `Option`s are implemented](https://github.com/scala/scala/blob/2.11.x/src/library/scala/Option.scala):
+As a reminder, here is [how Scala's `Option`s are implemented](https://github.com/scala/scala/blob/2.11.x/src/library/scala/Option.scala):
 
 ```scala
 sealed abstract class Option[+A]
@@ -18,48 +17,51 @@ final case class Some[+A](x: A) extends Option[A]
 case object None extends Option[Nothing]
 ```
 
-And the corresponding Scaladoc would look like that:
+Here is the corresponding scaladoc diagram:
 
-[![scala.Option](scala-option.svg)](scala-option.svg)
+[![scala.Option](scala-option.png)](scala-option.png)
 
-There are quite a few things happening here. In a nutshell, we need to be able to speak about the **types and their relationships**, then we need a way to **inject** values in those types, and finally we need a way to inspect the values for those types to **extract** their content.
+There are quite a few things happening here:
+* we need to be able to speak about the **types and their relationships**;
+* then we need a way to **inject** values in those types;
+* finally we need a way to inspect the values for those types to **extract** their content.
 
-On types and subtyping
+On types and subtyping {id="type-and-relationships"}
 ----------------------
 
 There is a **subtyping relationship** between `Some`/`None` and `Option`.
 
-Well, `None` is not a subtype of `Option`, but `None.type` is! Also, `Option` and `Some` are not technically types, but **type constructors**: we need to provide an `A` to produce a `Option[A]` type.
+Actually, `None` itself is not a type but a value, whose type is `None.type`, a subtype of `Option`. Also, `Option` and `Some` are not technically types, but **type constructors** (aka. [higher kinded types](https://stackoverflow.com/questions/6246719/what-is-a-higher-kinded-type-in-scala)): we need to provide a type `A` to produce an `Option[A]` type.
 
-Also, `Option` is covariant in its parameterized type `A`, so that `Option[Nothing]` is a subtype of `Option[A]` because [`Nothing` is a sybtype of any type](https://stackoverflow.com/questions/1728541/if-the-nothing-type-is-at-the-bottom-of-the-class-hierarchy-why-can-i-not-call).
+Finally, `Option` is covariant in its parameterized type `A`, so that `Option[Nothing]` is a subtype of `Option[A]` because [`Nothing` is a sybtype of any type](https://stackoverflow.com/questions/1728541/if-the-nothing-type-is-at-the-bottom-of-the-class-hierarchy-why-can-i-not-call).
 
-On injectors
+On injectors {id="injectors"}
 ------------
 
-We have two (here somewhat equivalent) ways of **constructing** a `Some[A]` given a value of type `A`:
+We have two (here somewhat equivalent) ways of **injecting** a value of type `A` into a `Some[A]`:
 
 * we can do that through the class constructor, eg. `new Some(42)`
 * or more natually through `Some.apply`, eg. `Some(42)`
 
-`None` is a singleton object, hence it is the only inhabitant of `None.type`.
+`None` is a singleton object, therefore it is the *only inhabitant* of `None.type`.
 
-On extractors
+On extractors {id="extractors"}
 -------------
 
-Given a `Option[A]`, we can reason by cases using **pattern matching**.
+Given an `Option[A]`, we can reason by cases using **pattern matching**.
 
-This is achieved through the [`unapply` extractor methods](http://docs.scala-lang.org/tutorials/tour/extractor-objects.html) on the companion object. And because `Option` is sealed, the type checker is able to check for exhaustiveness.
+This is achieved through the [`unapply` extractor methods](http://docs.scala-lang.org/tutorials/tour/extractor-objects.html) on the `Option` companion object. And because `Option` is sealed, the type checker will be able to check for exhaustiveness.
 
-Given an `Some[A]`, we can retrieve its content through the `x` field accessor, or again using `Some.unapply`.
+Finally, given a `Some[A]`, we can retrieve its content through the `x` field accessor, or again using the `Some.unapply` extractor.
 
 
 
-Abstracting over types
+Abstracting over types {id="abstracting-over-types"}
 ----------------------
 
-My colleague [Dan](https://twitter.com/dwhjames) explored [different ways to encode modules in Scala](http://io.pellucid.com/blog/scalas-modular-roots) in a previous blog article. If you haven't read it yet, I warmly recommend you to do it, even if not strictly necessary for understanding what's going on here. Also here, I will choose yet another encoding using a [typeclass](https://en.wikipedia.org/wiki/Type_class) approach.
+My colleague [Dan](https://twitter.com/dwhjames) explored [how to encode modules in Scala](http://io.pellucid.com/blog/scalas-modular-roots) in a previous blog article. If you haven't read it yet, I warmly recommend you to do it, even if not strictly necessary for understanding what is going on here. Also here, I will choose yet another encoding using a [typeclass](https://en.wikipedia.org/wiki/Type_class) approach.
 
-Let's gather all the type hierarchy in one place:
+First, let's gather all the type hierarchy in one place:
 
 ```scala
 import scala.language.higherKinds
