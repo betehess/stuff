@@ -403,11 +403,13 @@ How cool is that?
 
 
 
-Summary
+Summary {id="summary"}
 -------
 
-Through a very simple example, we have seen how to abstract Algebraic Data Types: we started with a trait gathering the whole type hierarchy (type names, subtyping relationships, and variance), and we then defined a typeclass for such a signature for the operations to manipulate the abstract datatypes (injector and extractors). I hope to have shown that typeclasses are a great alternative to the cake pattern when it comes to encode modules in Scala.
+Through a very simple example, we have seen how to abstract Algebraic Data Types with abstract types and a catamorphism: we started with a `trait` gathering the whole type hierarchy (type names, subtyping relationships, and variance), then we defined a typeclass for such a signature for the operations to manipulate the abstract datatypes (injectors, extractors, and `fold`).
 
-In practice, some variations are possible. For example, we could ignored the subtyping relationships altogether. We would have end up with something closer to what happens in OCaml or Haskell as the constructors would both return a `OptionSig#Option[A]`. Also, it is easy to define syntaxic enhancement, so that one could directly write something like `myOption.fold("42", x => x.toString)`.
+In the process, we have shown that typeclasses are a great alternative to the cake pattern when it comes to encode modules in Scala.
 
-The techniques described in this article are particularly interesting when it comes to expose existing Java libraries to Scala, because there is no wrapping involved. And that it the very reason why they were used in [Banana-RDF](https://github.com/w3c/banana-rdf/blob/master/rdf/common/src/main/scala/org/w3/banana/RDF.scala), where there are already three different implementations: Jena and Sesame (two competting Java libraries for RDF), and a pure Scala implementation. An `rdfstore-js` implementation is in the work using Scala-js.
+In practice, some variations are possible. For example, we could have ignored the subtyping relationships altogether. We would have end up with something closer to what happens in OCaml or Haskell as the constructors would both return a `OptionSig#Option[A]`. Also, it would be easy to define syntaxic enhancement, so that one could directly write something like `myOption.fold("42", x => x.toString)`.
+
+Finally, if you are interested in a more complex example using the techniques described here, have a look at [Banana-RDF](https://github.com/w3c/banana-rdf) and its [data model for RDF](https://github.com/w3c/banana-rdf/blob/master/rdf/common/src/main/scala/org/w3/banana/RDF.scala). The project provides five different implementations: 1. Jena and 2. Sesame (two competting Java libraries for RDF), 3. a pure Scala implementation that compiles down to JVM bytecode as well as 4. to Javascript through [Scala-js](http://www.scala-js.org/), and 5. a pure Javascript implementation bound to [rdfstore-js](https://github.com/antoniogarrote/rdfstore-js), again using Scala-js.
