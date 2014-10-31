@@ -61,7 +61,7 @@ Abstracting over types {id="abstracting-over-types"}
 
 My colleague [Dan](https://twitter.com/dwhjames) explored [how to encode modules in Scala](http://io.pellucid.com/blog/scalas-modular-roots) in a previous blog article. If you haven't read it yet, I warmly recommend you to do it, even if not strictly necessary for understanding what is going on here. Also here, I will choose yet another encoding using a [typeclass](https://en.wikipedia.org/wiki/Type_class) approach.
 
-First, let's gather all the type hierarchy in one place:
+First, let's define the entire type hierarchy in one place:
 
 ```scala
 import scala.language.higherKinds
@@ -73,15 +73,15 @@ trait OptionSig {
 }
 ```
 
-I use the `Sig` suffix as if `OptionSig` was an [ML module signature](http://caml.inria.fr/pub/docs/oreilly-book/html/book-ora131.html) but this is **not the complete signature** as there are no function defined in this trait.
+We used the `Sig` suffix as if `OptionSig` was an [ML module signature](http://caml.inria.fr/pub/docs/oreilly-book/html/book-ora131.html) but this is **not the complete signature** as there are no function defined in this trait.
 
-This is just a convenient way to gather several types into a single one, a bit like a record but for types. Given an `OptionSig`, we can speak about one of the types it contains using a type projection, eg. `OptionSig#Option[A]`.
+This is just a convenient way to gather several types into a single one, a bit like a record, but for types. Given an `OptionSig`, we can now speak about one of the types it contains using a type projection, eg. `OptionSig#Option[A]`.
 
 
-Abstracting over operations
+Abstracting over operations {id="abstracting-over-operations"}
 ---------------------------
 
-Now that we have type hierarchy, we can complete our signature with the operations that must be defined over it:
+Now that we have a type hierarchy, we can complete our signature with the operations that must be defined over it:
 
 ```scala
 abstract class OptionOps[Sig <: OptionSig] {
@@ -91,16 +91,18 @@ abstract class OptionOps[Sig <: OptionSig] {
 }
 ```
 
-You might be wondering why I need this `Sig` as a subtype for `OptionSig`, as this is usually not needed for typeclasses. It's because I need to be able to project the inner types.
+You might be wondering why we need this `Sig` as a subtype for `OptionSig`, as this is usually not needed for typeclasses. It's because we need to be able to project its inner types.
 
-`some[A]` is the injector for `Sig#Some[A]`. `none` doesn't take any parameter, so it acts as a singleton for `Sig#None`.
+`some[A]` is the injector for `Sig#Some[A]`. `none` doesn't take any parameter, so it really acts as a singleton value for `Sig#None`.
 
-`fold[A, B]` totally defines the type `Sig#Option[A]` through the two passed functions, which can react on the actual type for `opt` at runtime:
+`fold[A, B]` is the essence of the `Sig#Option[A]` type: given the two passed functions, it can react on the actual type for `opt` at runtime:
 
-* if `opt` was a `Sig#None`, then `ifNone` is returned (notice that it is a lazy parameter which is only computed if needed)
-* if `opt` was a `Sig#Some[A]`, then `ifSome` has access to the contained value to compute its result
+* if `opt` was a `Sig#None`, then the value for `ifNone` is returned (notice that it is a *lazy parameter* which is only computed if needed)
+* if `opt` was a `Sig#Some[A]`, then the `ifSome` function has access to the contained value to compute its result
 
-Finally, we can define a helper to retrieve an instance of `OptionOps[Sig]` given a signature (if it exists!):
+By the way, an algebra defined through a `fold` is called a [catamorphism](https://en.wikipedia.org/wiki/Catamorphism)!
+
+Finally, we can define a helper to retrieve an instance of `OptionOps[Sig]` given a signature, if it is available:
 
 ```scala
 object OptionOps {
