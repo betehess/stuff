@@ -33,7 +33,7 @@ There is a **subtyping relationship** between `Some`/`None` and `Option`.
 
 Actually, `None` itself is not a type but a value, whose type is `None.type`, a subtype of `Option`. Also, `Option` and `Some` are not technically types, but **type constructors** (aka. [higher kinded types](https://stackoverflow.com/questions/6246719/what-is-a-higher-kinded-type-in-scala)): we need to provide a type `A` to produce an `Option[A]` type.
 
-Finally, `Option` is covariant in its parameterized type `A`, so that `Option[Nothing]` is a subtype of `Option[A]` because [`Nothing` is a sybtype of any type](https://stackoverflow.com/questions/1728541/if-the-nothing-type-is-at-the-bottom-of-the-class-hierarchy-why-can-i-not-call).
+Finally, `Option` is covariant in its parameterized type `A`, so that `Option[Nothing]` is a subtype of `Option[A]` because [`Nothing` is a subtype of any type](https://stackoverflow.com/questions/1728541/if-the-nothing-type-is-at-the-bottom-of-the-class-hierarchy-why-can-i-not-call).
 
 On injectors {id="injectors"}
 ------------
