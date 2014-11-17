@@ -5,9 +5,7 @@ Scala's sealed class hierarchies (aka. [Algebraic Data Types](https://en.wikiped
 
 In this post, we will explore how we can relax this constraint so that we can get an abstracted version of `scala.Option`, which would allow us to switch implementations.
 
-
-Deconstructing Scala's algebraic data types {id="deconstructing"}
--------------------------------------------
+<h2 id="deconstructing">Deconstructing Scala's algebraic data types</h2>
 
 As a reminder, here is [how Scala's `Option`s are implemented](https://github.com/scala/scala/blob/2.11.x/src/library/scala/Option.scala):
 
@@ -26,8 +24,7 @@ There are quite a few things happening here:
 * then we need a way to **inject** values in those types;
 * finally we need a way to inspect the values for those types to **extract** their content.
 
-On types and subtyping {id="type-and-relationships"}
-----------------------
+<h2 id="type-and-relationships">On types and subtyping</h2>
 
 There is a **subtyping relationship** between `Some`/`None` and `Option`.
 
@@ -35,8 +32,7 @@ Actually, `None` itself is not a type but a value, whose type is `None.type`, a 
 
 Finally, `Option` is covariant in its parameterized type `A`, so that `Option[Nothing]` is a subtype of `Option[A]` because [`Nothing` is a subtype of any type](https://stackoverflow.com/questions/1728541/if-the-nothing-type-is-at-the-bottom-of-the-class-hierarchy-why-can-i-not-call).
 
-On injectors {id="injectors"}
-------------
+<h2 id="injectors">On injectors</h2>
 
 We have two (here somewhat equivalent) ways of **injecting** a value of type `A` into a `Some[A]`:
 
@@ -45,8 +41,7 @@ We have two (here somewhat equivalent) ways of **injecting** a value of type `A`
 
 `None` is a singleton object, therefore it is the *only inhabitant* of `None.type`.
 
-On extractors {id="extractors"}
--------------
+<h2 id="extractors">On extractors</h2>
 
 Given an `Option[A]`, we can reason by cases using **pattern matching**.
 
@@ -56,8 +51,7 @@ Finally, given a `Some[A]`, we can retrieve its content through the `x` field ac
 
 
 
-Abstracting over types {id="abstracting-over-types"}
-----------------------
+<h2 id="abstracting-over-types">Abstracting over types</h2>
 
 My colleague [Dan](https://twitter.com/dwhjames) explored [how to encode modules in Scala](http://io.pellucid.com/blog/scalas-modular-roots) in a previous blog article. If you haven't read it yet, I warmly recommend you to do it, even if not strictly necessary for understanding what is going on here. Also here, I will choose yet another encoding using a [typeclass](https://en.wikipedia.org/wiki/Type_class) approach.
 
@@ -78,8 +72,7 @@ We used the `Sig` suffix as if `OptionSig` was an [ML module signature](http://c
 This is just a convenient way to gather several types into a single one, a bit like a record, but for types. Given an `OptionSig`, we can now speak about one of the types it contains using a type projection, eg. `OptionSig#Option[A]`.
 
 
-Abstracting over operations {id="abstracting-over-operations"}
----------------------------
+<h2 id="abstracting-over-operations">Abstracting over operations</h2>
 
 Now that we have a type hierarchy, we can complete our signature with the operations that must be defined over it:
 
@@ -112,8 +105,7 @@ object OptionOps {
 }
 ```
 
-Functions over `OptionSig`/`OptionOps` {id="functor"}
---------------------------------------
+<h2 id="functor">Functions over `OptionSig`/`OptionOps`</h2>
 
 We now want to define new structures that depends on our module. For this, we need something similar to an [ML functor](http://caml.inria.fr/pub/docs/oreilly-book/html/book-ora131.html).
 
@@ -159,8 +151,7 @@ That is a lot of weird Scala notations that you may not be familiar with. Let's 
 
 
 
-A simple implementation {id="simple-implementation"}
------------------------
+<h2 id="simple-implementation">A simple implementation</h2>
 
 We almost have everything we need in place. We just need to provide an implementation for our module.
 
@@ -202,8 +193,7 @@ Just note that the typeclass instance for `OptionOps[ScalaOption]` is made avail
 
 
 
-Using our option {id={program}}
-----------------
+<h2 id="program">Using our option</h2>
 
 Finally, we can write a program using our shiny abstractions :-)
 
@@ -286,8 +276,7 @@ We have introduced an `abstract class None` so that we don't need to define a ty
 
 
 
-Java8-based implementation {id="java8-implementation"}
---------------------------
+<h2 id="java8-implementation">Java8-based implementation</h2>
 
 Now, let's reuse Java 8 `java.util.Optional`!
 
@@ -326,8 +315,7 @@ object Java8Option {
 
 
 
-`Any`-based implementation {id="any-implementation"}
---------------------------
+<h2 id="any-implementation">`Any`-based implementation</h2>
 
 Remember all the rage wars on `Option` vs `null`? Or the problem with boxing? Look at that:
 
@@ -364,8 +352,7 @@ But this is **completely typesafe** as it never leaks outside of the abstraction
 
 
 
-Back to our program
--------------------
+<h2 id="final">Back to our program</h2>
 
 We now have four implementations of our option module, all behaving the same way:
 
@@ -403,8 +390,7 @@ How cool is that?
 
 
 
-Summary {id="summary"}
--------
+<h2 id="summary">Summary</h2>
 
 Through a very simple example, we have seen how to abstract Algebraic Data Types with abstract types and a catamorphism: we started with a `trait` gathering the whole type hierarchy (type names, subtyping relationships, and variance), then we defined a typeclass for such a signature for the operations to manipulate the abstract datatypes (injectors, extractors, and `fold`).
 
