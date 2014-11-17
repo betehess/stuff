@@ -236,8 +236,7 @@ optNone: some(none)
 ```
 
 
-Our own module implementation {id="custom-implementation"}
------------------------------
+<h2 id="custom-implementation">Our own module implementation</h2>
 
 Turns out there are many ways to implement our module.
 
