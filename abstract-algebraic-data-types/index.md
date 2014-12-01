@@ -268,7 +268,7 @@ object MyOption extends OptionSig {
 }
 ```
 
-Notice that our signature lies in the singleton type `MyOption.type`. Scala will have no issue finding the implicit instance in itself because *the companion object for the singleton type of a singleton object is itself*!
+Notice that our signature lies in the singleton type `MyOption.type`. Scala will have no issue finding the implicit instance in itself because *the companion object for a singleton object is itself*!
 
 We have introduced an `abstract class None` so that we don't need to define a type alias `type None = None.type`. It also is interesting to see that Scala doesn't require us to define our classes outside of `MyOption` to later alias them: we just do everything at once.
 
